@@ -1,4 +1,6 @@
-import better_exceptions  # noqa
+import better_exceptions
+
+better_exceptions.enable()
 
 foo = 52
 

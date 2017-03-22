@@ -51,6 +51,8 @@ THEME = {
 
 MAX_LENGTH = 128
 
+OLD_EXCEPTHOOK = None
+
 
 def colorize_comment(source):
     match = COMMENT_REGXP.match(source)
@@ -203,4 +205,15 @@ def excepthook(exc, value, tb):
     print(full_trace, file=sys.stderr)
 
 
-sys.excepthook = excepthook
+def enable():
+    global OLD_EXCEPTHOOK
+    if OLD_EXCEPTHOOK is None:
+        OLD_EXCEPTHOOK = sys.excepthook
+        sys.excepthook = excepthook
+
+
+def disable():
+    global OLD_EXCEPTHOOK
+    if OLD_EXCEPTHOOK is not None:
+        sys.excepthook = OLD_EXCEPTHOOK
+        OLD_EXCEPTHOOK = None
