@@ -27,13 +27,18 @@ def isast(v):
     return inspect.isclass(v) and issubclass(v, ast.AST)
 
 
-NOCOLOR = not os.isatty(2) or os.name == 'nt' or os.getenv('TERM', '')[:5] != 'xterm'
+NOCOLOR = (not os.isatty(2) or os.name == 'nt' or
+           os.getenv('TERM', '')[:5] != 'xterm')
 
-COMMENT_REGXP = re.compile(r'((?:(?:"(?:[^\\"]|(\\\\)*\\")*")|(?:\'(?:[^\\"]|(\\\\)*\\\')*\')|[^#])*)(#.*)$')
+COMMENT_REGXP = re.compile(
+    r'((?:(?:"(?:[^\\"]|(\\\\)*\\")*")|(?:\'(?:[^\\"]|(\\\\)*\\\')*\')|'
+    r'[^#])*)(#.*)$')
 
 AST_ELEMENTS = {
     'builtins': __builtins__.keys(),
-    'keywords': [getattr(ast, cls) for cls in dir(ast) if keyword.iskeyword(cls.lower()) and isast(getattr(ast, cls))],
+    'keywords': [getattr(ast, cls) for cls in dir(ast)
+                 if keyword.iskeyword(cls.lower()) and
+                 isast(getattr(ast, cls))],
 }
 
 THEME = {
@@ -50,7 +55,8 @@ MAX_LENGTH = 128
 def colorize_comment(source):
     match = COMMENT_REGXP.match(source)
     if match:
-        source = '{}{}'.format(match.group(1), THEME['comment'](match.group(4)))
+        source = '{}{}'.format(
+            match.group(1), THEME['comment'](match.group(4)))
     return source
 
 
@@ -77,7 +83,8 @@ def colorize_tree(tree, source):
         nodename = nodecls.__name__
 
         if 'col_offset' not in dir(node):
-            # this would probably benefit from using the `parser` module in the future...
+            # this would probably benefit from using the `parser` module in the
+            # future...
             continue
 
         if nodecls in AST_ELEMENTS['keywords']:
@@ -144,7 +151,8 @@ def get_frame_information(frame):
 
 
 def format_frame(frame):
-    filename, lineno, function, source, color_source, relevant_values = get_frame_information(frame)
+    filename, lineno, function, source, color_source, relevant_values = (
+        get_frame_information(frame))
 
     lines = [color_source]
     for i in reversed(range(len(relevant_values))):
@@ -189,7 +197,8 @@ def excepthook(exc, value, tb):
         value.args = (colored_source,)
     title = traceback.format_exception_only(exc, value)
 
-    full_trace = u'Traceback (most recent call last):\n{}{}'.format(formatted, title[0].strip())
+    full_trace = (u'Traceback (most recent call last):\n{}{}'.format(
+        formatted, title[0].strip()))
 
     print(full_trace, file=sys.stderr)
 

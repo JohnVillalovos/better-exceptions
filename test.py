@@ -1,4 +1,4 @@
-import better_exceptions
+import better_exceptions  # noqa
 
 foo = 52
 
